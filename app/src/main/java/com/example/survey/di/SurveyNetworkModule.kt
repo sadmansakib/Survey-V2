@@ -1,6 +1,7 @@
 package com.example.survey.di
 
 import com.example.survey.network.SurveyNetworkInterface
+import com.example.survey.network.interceptor.TimestampHeaderInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -32,11 +33,13 @@ object SurveyNetworkModule {
 
     @Singleton
     @Provides
-    fun provideNetworkClient(httpLoggingInterceptor: HttpLoggingInterceptor):OkHttpClient{
+    fun provideNetworkClient(httpLoggingInterceptor: HttpLoggingInterceptor,
+                             timestampHeaderInterceptor: TimestampHeaderInterceptor):OkHttpClient{
         return OkHttpClient.Builder().apply {
             connectTimeout(30, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             retryOnConnectionFailure(true)
+            addInterceptor(timestampHeaderInterceptor)
             addInterceptor(httpLoggingInterceptor)
         }.build()
     }
