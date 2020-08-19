@@ -1,4 +1,4 @@
-package com.example.survey.Repository
+package com.example.survey.repository
 
 import com.example.survey.network.SurveyNetworkInterface
 import javax.inject.Inject
