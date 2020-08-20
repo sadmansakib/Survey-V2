@@ -11,49 +11,50 @@ import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.fragment_survey.*
 import timber.log.Timber
 
-fun SurveyFragment.addEditText(optionHolder: MaterialCardView?, type: InputTypeHelper) = when(type){
-    InputTypeHelper.TEXT -> {
-        optionHolder?.removeAllViews()
-        val editText = EditText(requireContext()).also { editText ->
-            editText.layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT ,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            editText.maxLines = 4
-            next_btn.isEnabled = false
-        }.apply {
+fun SurveyFragment.addEditText(type: InputTypeHelper):EditText {
+     when (type) {
+        InputTypeHelper.TEXT -> {
+            return EditText(requireContext()).also { editText ->
+                editText.layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT ,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                editText.maxLines = 4
+                next_btn.isEnabled = false
+            }.apply {
+                addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(
+                        p0: CharSequence? ,
+                        p1: Int ,
+                        p2: Int ,
+                        p3: Int
+                    ) {
 
-            addTextChangedListener(object : TextWatcher{
-                override fun beforeTextChanged(p0: CharSequence? , p1: Int , p2: Int , p3: Int) {
+                    }
 
-                }
+                    override fun onTextChanged(p0: CharSequence? , p1: Int , p2: Int , p3: Int) {
+                        Timber.d("Text Changed")
+                        next_btn.isEnabled = p0.toString().trim().isNotEmpty()
+                    }
 
-                override fun onTextChanged(p0: CharSequence? , p1: Int , p2: Int , p3: Int) {
-                    Timber.d("Text Changed")
-                    next_btn.isEnabled = p0.toString().trim().isNotEmpty()
-                }
-
-                override fun afterTextChanged(p0: Editable?) {
-                }
-            })
+                    override fun afterTextChanged(p0: Editable?) {
+                    }
+                })
+            }
         }
-        optionHolder !!.addView(editText)
-    }
 
-    InputTypeHelper.NUMBER -> {
-        optionHolder?.removeAllViews()
-        val editText = EditText(requireContext()).also {
-            it.layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
-            it.inputType = InputType.TYPE_CLASS_NUMBER
+        InputTypeHelper.NUMBER -> {
+            return EditText(requireContext()).also {
+                it.layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT ,
+                    ViewGroup.LayoutParams.WRAP_CONTENT)
+                it.inputType = InputType.TYPE_CLASS_NUMBER
+            }
         }
-        optionHolder!!.addView(editText)
     }
 }
 
-fun SurveyFragment.addCheckbox(optionHolder: MaterialCardView?, options: String) {
-    optionHolder?.removeAllViews()
+fun SurveyFragment.addCheckbox(options: String): LinearLayout {
     next_btn.isEnabled = false
     val optionArray = options.split(',')
     val linearLayout = LinearLayout(requireContext()).also {
@@ -74,13 +75,10 @@ fun SurveyFragment.addCheckbox(optionHolder: MaterialCardView?, options: String)
         }
         linearLayout.addView(checkBox)
     }
-
-
-    optionHolder!!.addView(linearLayout)
+    return linearLayout
 }
 
-fun SurveyFragment.addRadioButton(optionHolder: MaterialCardView?, option: String) {
-    optionHolder?.removeAllViews()
+fun SurveyFragment.addRadioButton( option: String): RadioGroup {
     next_btn.isEnabled = false
     val radioGroup = RadioGroup(requireContext())
     for (i in option.split(',')){
@@ -92,14 +90,15 @@ fun SurveyFragment.addRadioButton(optionHolder: MaterialCardView?, option: Strin
     }
 
     radioGroup.setOnCheckedChangeListener(fun(radioGroup: RadioGroup , i: Int) = radioGroup.let {
+        val pressedBtn = radioGroup.findViewById<RadioButton>(i)
         next_btn.isEnabled = it.checkedRadioButtonId == i
     })
 
-    optionHolder!!.addView(radioGroup)
+    return radioGroup
 }
 
-fun SurveyFragment.addDropdown(optionHolder: MaterialCardView?, options: String) {
-    optionHolder?.removeAllViews()
+fun SurveyFragment.addDropdown(options: String): Spinner {
+    lateinit var answer : String
     val list = options.split(',')
     val arrayList = ArrayList<String>().apply {
         add("None")
@@ -113,6 +112,7 @@ fun SurveyFragment.addDropdown(optionHolder: MaterialCardView?, options: String)
             override fun onItemSelected(p0: AdapterView<*>? , p1: View? , p2: Int , p3: Long) {
                 if (p0 != null) {
                     Timber.d(p0.selectedItem.toString().trim())
+                    answer = p0.selectedItem.toString().trim()
                     this@addDropdown.next_btn.isEnabled = p0.selectedItem.toString().trim() != "None"
                 }
             }
@@ -121,5 +121,5 @@ fun SurveyFragment.addDropdown(optionHolder: MaterialCardView?, options: String)
             }
         }
     }
-    optionHolder!!.addView(spinner)
+    return spinner
 }

@@ -1,4 +1,4 @@
-package com.example.survey.model
+package com.example.survey.model.network
 
 data class SurveyResponseItem(
     val options: String,

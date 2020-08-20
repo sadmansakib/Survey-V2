@@ -1,9 +1,10 @@
 package com.example.survey.network
 
-import com.example.survey.model.SurveyResponse
+import com.example.survey.model.network.SurveyResponse
+import retrofit2.Response
 import retrofit2.http.GET
 
 interface SurveyNetworkInterface {
     @GET("getSurvey")
-    suspend fun getSurvey():SurveyResponse
+    suspend fun getSurvey(): Response<SurveyResponse>
 }

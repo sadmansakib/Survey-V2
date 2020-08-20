@@ -1,5 +1,8 @@
 package com.example.survey.di
 
+import android.content.Context
+import androidx.room.Room
+import com.example.survey.db.SurveyCacheDataBase
 import com.example.survey.network.SurveyNetworkInterface
 import com.example.survey.network.interceptor.TimestampHeaderInterceptor
 import com.google.gson.Gson
@@ -8,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
